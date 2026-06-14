@@ -25,6 +25,7 @@ from ..localization import translate as _
 from ..settings import Setting, settings
 from .switch import SwitchWidget
 from .theme import add_header, icon
+from .widget import TextPromptWidget
 
 
 class ExpanderButton(QToolButton):
@@ -390,6 +391,34 @@ class LineEditSetting(SettingWidgetBase):
     @value.setter
     def value(self, v):
         self._edit.setText(v)
+
+
+class PromptSetting(QWidget):
+    value_changed = pyqtSignal()
+
+    def __init__(self, setting: Setting, line_count=4, is_negative=False, parent=None):
+        super().__init__(parent)
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.setLayout(layout)
+        add_header(layout, setting)
+
+        self._edit = TextPromptWidget(line_count=line_count, is_negative=is_negative, parent=self)
+        self._edit.is_resizable = True
+        self._edit.text_changed.connect(self._change_value)
+        layout.addWidget(self._edit)
+
+    def _change_value(self):
+        self.value_changed.emit()
+
+    @property
+    def value(self):
+        return self._edit.text
+
+    @value.setter
+    def value(self, v):
+        self._edit.text = v
 
 
 _default_switch_labels = (_("On"), _("Off"))

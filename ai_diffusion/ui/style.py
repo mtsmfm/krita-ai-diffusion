@@ -35,7 +35,7 @@ from . import theme
 from .settings_widgets import (
     ComboBoxSetting,
     ExpanderButton,
-    LineEditSetting,
+    PromptSetting,
     SettingsTab,
     SettingWidget,
     SettingWidgetBase,
@@ -727,8 +727,13 @@ class StylePresets(SettingsTab):
         self._layout.addWidget(self._loras)
         self._loras.value_changed.connect(self.write)
 
-        add("style_prompt", LineEditSetting(StyleSettings.style_prompt, self))
-        add("negative_prompt", LineEditSetting(StyleSettings.negative_prompt, self))
+        add("style_prompt", PromptSetting(StyleSettings.style_prompt, line_count=4, parent=self))
+        add(
+            "negative_prompt",
+            PromptSetting(
+                StyleSettings.negative_prompt, line_count=3, is_negative=True, parent=self
+            ),
+        )
 
         self._edit_style = add(
             "linked_edit_style", ComboBoxSetting(StyleSettings.linked_edit_style, parent=self)
